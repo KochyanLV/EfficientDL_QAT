@@ -14,6 +14,7 @@ import torch
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
 EPOCHS = 5
 BATCH_SIZE = 8
 EMB_DIM = 128
@@ -24,7 +25,7 @@ LR = 1e-3
 if __name__ == "__main__":
     set_seed(42)
     
-    train_loader, test_loader, tokenizer = make_loaders(tokenizer_path="", batch_size=BATCH_SIZE)
+    train_loader, test_loader, tokenizer = make_loaders(tokenizer_path="lstm/own_tokenizer/", batch_size=BATCH_SIZE)
     # base without quant
     model_base = BaseLSTM(
         vocab_size=tokenizer.vocab_size,

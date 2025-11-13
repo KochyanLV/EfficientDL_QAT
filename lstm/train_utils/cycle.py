@@ -52,8 +52,10 @@ def train_one_epoch(
     loss_fn = nn.BCEWithLogitsLoss()
     total_loss = 0.0
     n_samples = 0
+    
+    bs_ = loader.batch_size
 
-    for batch in tqdm(loader, total=len(loader)):
+    for batch in tqdm(loader, total=len(loader) // bs_):
         batch = to_device(batch, device)
         input_ids = batch["input_ids"]        # (B, T)
         labels = batch["labels"].float()      # (B,)
@@ -88,8 +90,10 @@ def evaluate(
 
     logits_all = []
     labels_all = []
+    
+    bs_ = loader.batch_size
 
-    for batch in tqdm(loader, total=len(loader)):
+    for batch in tqdm(loader, total=len(loader) // bs_):
         batch = to_device(batch, device)
         input_ids = batch["input_ids"]
         labels = batch["labels"].float()
@@ -127,11 +131,14 @@ def fit(
     def lr_lambda(step):
         return 0.5 * (1 + math.cos(math.pi * step / max(total_steps, 1)))
     scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+    
+    bs = train_loader.batch_size
 
     best_auc = -1.0
     best_state = None
     history = []
     global_step = 0
+    
     for epoch in tqdm(range(1, epochs + 1)):
         train_loss = train_one_epoch(model, train_loader, optimizer, device)
         val_loss, val_metrics = evaluate(model, val_loader, device)
