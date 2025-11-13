@@ -139,9 +139,9 @@ def fit(
     global_step = 0
     
     for epoch in tqdm(range(1, epochs + 1)):
-        logger.info(f"Train model. EPOCH: {epoch + 1} // {epochs + 1}")
+        logger.info(f"Train model. EPOCH: {epoch} // {epochs}")
         train_loss = train_one_epoch(model, train_loader, optimizer, device)
-        logger.info(f"Validate model. EPOCH: {epoch + 1} // {epochs + 1}")
+        logger.info(f"Validate model. EPOCH: {epoch} // {epochs}")
         val_loss, val_metrics = evaluate(model, val_loader, device)
         scheduler.step()
         global_step += len(train_loader)
