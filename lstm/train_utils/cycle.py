@@ -138,7 +138,7 @@ def fit(
     history = []
     global_step = 0
     
-    for epoch in tqdm(range(1, epochs + 1)):
+    for epoch in range(1, epochs + 1):
         logger.info(f"Train model. EPOCH: {epoch} // {epochs}")
         train_loss = train_one_epoch(model, train_loader, optimizer, device)
         logger.info(f"Validate model. EPOCH: {epoch} // {epochs}")
@@ -174,13 +174,15 @@ def fit(
         model.load_state_dict(best_state)
     print(f"Best val AUC: {best_auc:.4f}")
     
-    logger.info(f"Save best model and metrics to: {ckpt_path}")
     
     ckpt_path = save_ckpt_from_init(
         model,
         extra={"epochs": epochs, "bs": bs, "lr": lr},
         with_values=True,
     )
+    
+    logger.info(f"Save best model and metrics to: {ckpt_path}")
+
     
     ckpt_path = Path(ckpt_path)
     metrics_path = ckpt_path.with_suffix(".json") 
