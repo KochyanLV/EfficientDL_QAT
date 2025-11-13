@@ -12,6 +12,9 @@ from lstm.lstm_utils.seeds import set_seed
 
 import torch
 
+import logging
+logger = logging.getLogger(__name__)
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -27,6 +30,7 @@ if __name__ == "__main__":
     
     train_loader, test_loader, tokenizer = make_loaders(tokenizer_path="lstm/own_tokenizer/", batch_size=BATCH_SIZE)
     # base without quant
+    logger.info("Model: Base")
     model_base = BaseLSTM(
         vocab_size=tokenizer.vocab_size,
         emb_dim=EMB_DIM,
@@ -35,7 +39,9 @@ if __name__ == "__main__":
     )
     model_base = model_base.to(device)
     
+    
     # lsq quant
+    logger.info("Model: LSQ")
     model_lsq = QuantLSTMLSQ(
         vocab_size=tokenizer.vocab_size,
         emb_dim=EMB_DIM,
@@ -46,6 +52,7 @@ if __name__ == "__main__":
     model_lsq = fit(model_lsq, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # pact quant
+    logger.info("Model: PACT")
     model_pact = QuantLSTMPACT(    
         vocab_size=tokenizer.vocab_size,
         emb_dim=EMB_DIM,
@@ -58,6 +65,7 @@ if __name__ == "__main__":
     model_pact = fit(model_pact, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
         
     # adaround quant
+    logger.info("Model: AdaRound")
     model_ada = QuantLSTMAdaRound(
         vocab_size=tokenizer.vocab_size,
         emb_dim=EMB_DIM,
@@ -68,6 +76,7 @@ if __name__ == "__main__":
     model_ada = fit(model_ada, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # apot quant
+    logger.info("Model: APOT")
     model_apot = QuantLSTMAPoT(
         vocab_size=tokenizer.vocab_size,
         emb_dim=EMB_DIM,
@@ -82,6 +91,7 @@ if __name__ == "__main__":
     model_apot = fit(model_apot, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # dorefa quant
+    logger.info("Model: DoREFA")
     model_dorefa = QuantLSTMDoReFa(
         vocab_size=tokenizer.vocab_size,
         emb_dim=EMB_DIM,
@@ -95,6 +105,7 @@ if __name__ == "__main__":
     model_dorefa = fit(model_dorefa, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # fake quant
+    logger.info("Model: Fake")
     model_fake = QuantLSTMSTE(
         vocab_size=tokenizer.vocab_size,
         emb_dim=EMB_DIM,

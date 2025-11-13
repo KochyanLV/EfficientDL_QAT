@@ -5,6 +5,9 @@ from transformers import PreTrainedTokenizerFast
 
 from functools import partial
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def load_tokenizer(tokenizer_path: str = "lstm/own_tokenizer"):
     tokenizer = PreTrainedTokenizerFast.from_pretrained(tokenizer_path)
@@ -26,6 +29,7 @@ def tokenize_batch_no_pad(batch, tokenizer, max_len: int = 512):
     
     
 def make_loaders(tokenizer_path: str = "../own_tokenizer", batch_size: int = 8, max_len: int = 512):
+    logger.info("Make loaders and tokenizer")
     dataset = load_data()
     tokenizer = load_tokenizer(tokenizer_path=tokenizer_path)
 

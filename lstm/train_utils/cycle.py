@@ -11,6 +11,9 @@ import torch.nn as nn
 
 from lstm.train_utils.save_checkpoint import save_ckpt_from_init
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def to_device(batch: Dict[str, torch.Tensor], device: torch.device) -> Dict[str, torch.Tensor]:
     return {k: v.to(device) for k, v in batch.items()}
@@ -52,10 +55,8 @@ def train_one_epoch(
     loss_fn = nn.BCEWithLogitsLoss()
     total_loss = 0.0
     n_samples = 0
-    
-    bs_ = loader.batch_size
 
-    for batch in tqdm(loader, total=len(loader) // bs_):
+    for batch in loader:
         batch = to_device(batch, device)
         input_ids = batch["input_ids"]        # (B, T)
         labels = batch["labels"].float()      # (B,)
@@ -91,9 +92,7 @@ def evaluate(
     logits_all = []
     labels_all = []
     
-    bs_ = loader.batch_size
-
-    for batch in tqdm(loader, total=len(loader) // bs_):
+    for batch in loader:
         batch = to_device(batch, device)
         input_ids = batch["input_ids"]
         labels = batch["labels"].float()
@@ -140,7 +139,9 @@ def fit(
     global_step = 0
     
     for epoch in tqdm(range(1, epochs + 1)):
+        logger.info(f"Train model. EPOCH: {epoch + 1} // {epochs + 1}")
         train_loss = train_one_epoch(model, train_loader, optimizer, device)
+        logger.info(f"Validate model. EPOCH: {epoch + 1} // {epochs + 1}")
         val_loss, val_metrics = evaluate(model, val_loader, device)
         scheduler.step()
         global_step += len(train_loader)
@@ -173,6 +174,7 @@ def fit(
         model.load_state_dict(best_state)
     print(f"Best val AUC: {best_auc:.4f}")
     
+    logger.info(f"Save best model and metrics to: {ckpt_path}")
     
     ckpt_path = save_ckpt_from_init(
         model,
