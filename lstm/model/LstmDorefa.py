@@ -1,8 +1,10 @@
 from qats.DoReFa import DoReFaActQuant, DoReFaWeightQuant
 from lstm.model.Base import BaseLSTM
 import torch
+from lstm.train_utils.save_checkpoint import record_init
 
 
+@record_init
 class QuantLSTMDoReFa(BaseLSTM):
     """
     BaseLSTM + DoReFa:

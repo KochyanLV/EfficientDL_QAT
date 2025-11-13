@@ -2,7 +2,10 @@ from qats.Pact import PACTAct, UniformWeightQuant
 from lstm.model.Base import BaseLSTM
 import torch
 
+from lstm.train_utils.save_checkpoint import record_init
 
+
+@record_init
 class QuantLSTMPACT(BaseLSTM):
     """
     BaseLSTM + PACT on activations + symmetric weight fake-quant on the head.

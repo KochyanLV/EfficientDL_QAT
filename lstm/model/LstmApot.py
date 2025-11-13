@@ -1,8 +1,10 @@
 from qats.Apot import APoTQuantRCF
 from lstm.model.Base import BaseLSTM
 import torch
+from lstm.train_utils.save_checkpoint import record_init
 
 
+@record_init
 class QuantLSTMAPoT(BaseLSTM):
     """
     BaseLSTM + APoTQuantRCF:

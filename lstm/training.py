@@ -18,6 +18,7 @@ EPOCHS = 5
 BATCH_SIZE = 8
 EMB_DIM = 128
 HIDDEN_DIM = 256
+LR = 1e-3
 
 
 if __name__ == "__main__":
@@ -41,7 +42,7 @@ if __name__ == "__main__":
         num_classes=1,
         bits=8
     )
-    model_lsq = fit(model_lsq, train_loader, test_loader, device, epochs=EPOCHS, lr=1e-3)
+    model_lsq = fit(model_lsq, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # pact quant
     model_pact = QuantLSTMPACT(    
@@ -53,8 +54,8 @@ if __name__ == "__main__":
         bits_w=8, 
         pact_init_alpha=6.0
     )
-    model_pact = fit(model_pact, train_loader, test_loader, device, epochs=EPOCHS, lr=1e-3)
-    
+    model_pact = fit(model_pact, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
+        
     # adaround quant
     model_ada = QuantLSTMAdaRound(
         vocab_size=tokenizer.vocab_size,
@@ -63,7 +64,7 @@ if __name__ == "__main__":
         num_classes=1,
         bits_w=8
     )
-    model_ada = fit(model_ada, train_loader, test_loader, device, epochs=EPOCHS, lr=1e-3)
+    model_ada = fit(model_ada, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # apot quant
     model_apot = QuantLSTMAPoT(
@@ -77,7 +78,7 @@ if __name__ == "__main__":
         init_alpha_w=2.0,
         use_weight_norm_w=True
     )
-    model_apot = fit(model_apot, train_loader, test_loader, device, epochs=EPOCHS, lr=1e-3)
+    model_apot = fit(model_apot, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # dorefa quant
     model_dorefa = QuantLSTMDoReFa(
@@ -90,7 +91,7 @@ if __name__ == "__main__":
         act_signed=True,
         act_preproc="tanh",
     )
-    model_dorefa = fit(model_dorefa, train_loader, test_loader, device, epochs=EPOCHS, lr=1e-3)
+    model_dorefa = fit(model_dorefa, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
     # fake quant
     model_fake = QuantLSTMSTE(
@@ -100,5 +101,5 @@ if __name__ == "__main__":
         num_classes=1,
         bits=8
     )
-    model_fake = fit(model_fake, train_loader, test_loader, device, epochs=EPOCHS, lr=1e-3)
+    model_fake = fit(model_fake, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     

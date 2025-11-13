@@ -1,6 +1,9 @@
 import torch.nn as nn
 import torch.nn.functional as F
+from lstm.train_utils.save_checkpoint import record_init
 
+
+@record_init
 class BaseLSTM(nn.Module):
     """
     База для простых LSTM-классификаторов.

@@ -3,9 +3,13 @@ from sklearn.metrics import roc_auc_score, f1_score, precision_score, recall_sco
 import math
 from typing import Dict, Tuple
 from tqdm import tqdm
+import json
+from pathlib import Path
 
 import torch
 import torch.nn as nn
+
+from lstm.train_utils.save_checkpoint import save_ckpt_from_init
 
 
 def to_device(batch: Dict[str, torch.Tensor], device: torch.device) -> Dict[str, torch.Tensor]:
@@ -126,7 +130,7 @@ def fit(
 
     best_auc = -1.0
     best_state = None
-
+    history = []
     global_step = 0
     for epoch in tqdm(range(1, epochs + 1)):
         train_loss = train_one_epoch(model, train_loader, optimizer, device)
@@ -143,6 +147,16 @@ def fit(
             f"val_prec={val_metrics['precision']:.4f} | "
             f"val_rec={val_metrics['recall']:.4f}"
         )
+        
+        history.append({
+            "epoch": epoch,
+            "train_loss": float(train_loss),
+            "val_loss": float(val_loss),
+            "roc_auc": float(val_metrics["roc_auc"]),
+            "f1": float(val_metrics["f1"]),
+            "precision": float(val_metrics["precision"]),
+            "recall": float(val_metrics["recall"]),
+        })
 
         if not math.isnan(val_metrics["roc_auc"]) and val_metrics["roc_auc"] > best_auc:
             best_auc = val_metrics["roc_auc"]
@@ -151,5 +165,18 @@ def fit(
     if best_state is not None:
         model.load_state_dict(best_state)
     print(f"Best val AUC: {best_auc:.4f}")
-
+    
+    
+    ckpt_path = save_ckpt_from_init(
+        model,
+        extra={"epochs": epochs, "bs": bs, "lr": lr},
+        with_values=True,
+    )
+    
+    ckpt_path = Path(ckpt_path)
+    metrics_path = ckpt_path.with_suffix(".json") 
+    
+    with open(metrics_path, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+    
     return model

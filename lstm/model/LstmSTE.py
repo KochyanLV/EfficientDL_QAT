@@ -3,7 +3,10 @@ import torch.nn as nn
 
 from qats.FakeSte import FakeQuantSTE
 from lstm.model.Base import BaseLSTM
+from lstm.train_utils.save_checkpoint import record_init
 
+
+@record_init
 class QuantLSTMSTE(BaseLSTM):
     """
     Наследник BaseLSTM с простейшей fake-квантовкой на активациях и весах головы.

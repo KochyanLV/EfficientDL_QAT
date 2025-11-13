@@ -1,8 +1,10 @@
 from qats.AdaRound import AdaRoundWeightQuant
 from lstm.model.Base import BaseLSTM
 import torch
+from lstm.train_utils.save_checkpoint import record_init
 
 
+@record_init
 class QuantLSTMAdaRound(BaseLSTM):
     """
     BaseLSTM + AdaRound для весов Linear-головы.

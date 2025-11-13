@@ -2,7 +2,10 @@ from qats.LSQ import LSQQuant
 from lstm.model.Base import BaseLSTM
 import torch
 
+from lstm.train_utils.save_checkpoint import record_init
 
+
+@record_init
 class QuantLSTMLSQ(BaseLSTM):
     """
     BaseLSTM + LSQ fake quant:
