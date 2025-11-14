@@ -17,41 +17,25 @@ def load_movielens_100k(min_rating: float = 4.0):
         num_users: int
         num_items: int
     """
-    logger.info("Loading MovieLens-100K dataset")
+    logger.info("Generating synthetic sequential recommendation data")
+    logger.info("(For real experiments, replace with MovieLens, Amazon, or other sequential dataset)")
     
-    try:
-        from datasets import load_dataset
-        ds = load_dataset("rotten_tomatoes")  # Using a simpler dataset as placeholder
-        # In production, you would use actual MovieLens or similar recommendation dataset
-        logger.warning("Using rotten_tomatoes as placeholder. For real experiments, use MovieLens or similar.")
-        
-        # Create synthetic sequential data for demonstration
-        # In real implementation, load actual sequential recommendation dataset
-        user_sequences = defaultdict(list)
-        num_users = 100
-        num_items = 500
-        
-        # Generate synthetic user sequences
-        np.random.seed(42)
-        for user_id in range(num_users):
-            seq_len = np.random.randint(5, 20)
-            items = np.random.choice(num_items, size=seq_len, replace=False).tolist()
-            user_sequences[user_id] = items
-            
-    except Exception as e:
-        logger.warning(f"Could not load dataset from HuggingFace: {e}")
-        logger.info("Generating synthetic sequential recommendation data")
-        
-        # Generate synthetic data
-        user_sequences = defaultdict(list)
-        num_users = 100
-        num_items = 500
-        
-        np.random.seed(42)
-        for user_id in range(num_users):
-            seq_len = np.random.randint(5, 20)
-            items = np.random.choice(num_items, size=seq_len, replace=False).tolist()
-            user_sequences[user_id] = items
+    # Generate synthetic sequential data for demonstration
+    # TODO: Replace with real dataset loading:
+    #   - MovieLens: https://grouplens.org/datasets/movielens/
+    #   - Amazon Reviews: http://jmcauley.ucsd.edu/data/amazon/
+    #   - Steam: https://cseweb.ucsd.edu/~jmcauley/datasets.html#steam_data
+    
+    user_sequences = defaultdict(list)
+    num_users = 100
+    num_items = 500
+    
+    # Generate synthetic user sequences
+    np.random.seed(42)
+    for user_id in range(num_users):
+        seq_len = np.random.randint(5, 20)
+        items = np.random.choice(num_items, size=seq_len, replace=False).tolist()
+        user_sequences[user_id] = items
     
     logger.info(f"Loaded {len(user_sequences)} users, {num_items} items")
     return dict(user_sequences), num_users, num_items

@@ -124,7 +124,7 @@ if __name__ == "__main__":
         max_len=MAX_LEN,
         dropout=DROPOUT,
         bits=8,
-        k=2,
+        k=1,  # For bits=8: (8-1) % k must be 0, so k=1 or k=7
         init_alpha_act=6.0,
         init_alpha_w=2.0,
         use_weight_norm_w=True

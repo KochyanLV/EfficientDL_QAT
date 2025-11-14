@@ -10,7 +10,7 @@ class QuantSASRecAPoT(BaseSASRec):
     SASRec + APoTQuantRCF:
       - APoT on activations (per-tensor) after embedding and transformer blocks
       - APoT on head weights (per-channel by out_features), with optional WeightNorm
-    Default parameters: bits=8, k=2.
+    Default parameters: bits=8, k=1 (for bits=8, k must divide (bits-1), so k=1 or k=7).
     """
     def __init__(
         self,
@@ -21,7 +21,7 @@ class QuantSASRecAPoT(BaseSASRec):
         max_len: int = 50,
         dropout: float = 0.2,
         bits: int = 8,
-        k: int = 2,
+        k: int = 1,
         init_alpha_act: float = 6.0,
         init_alpha_w: float = 2.0,
         use_weight_norm_w: bool = True,
