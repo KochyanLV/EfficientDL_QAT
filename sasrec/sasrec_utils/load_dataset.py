@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def load_movielens_100k(min_rating: float = 4.0):
+def load_movielens(min_rating: float = 4.0):
     """
     Load MovieLens 100K dataset for sequential recommendation.
     Args:

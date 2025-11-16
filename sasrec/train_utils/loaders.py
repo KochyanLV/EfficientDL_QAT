@@ -4,7 +4,7 @@ import numpy as np
 from typing import Dict, List
 import logging
 
-from sasrec.sasrec_utils.load_dataset import load_movielens_100k, prepare_sequences
+from sasrec.sasrec_utils.load_dataset import load_movielens, prepare_sequences
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,7 @@ def make_loaders(batch_size: int = 32, max_len: int = 50, num_workers: int = 0):
     logger.info("Creating dataloaders for SASRec")
     
     # Load dataset
-    user_sequences, num_users, num_items = load_movielens_100k()
+    user_sequences, num_users, num_items = load_movielens()
     
     # Prepare sequences
     train_data, test_data = prepare_sequences(user_sequences, max_len=max_len)
