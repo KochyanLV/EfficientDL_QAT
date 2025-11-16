@@ -7,7 +7,11 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
 from qats.LSQ import LSQQuant
-from model import SASRec
+
+try:
+    from model import SASRec
+except ImportError:
+    from src.model import SASRec
 
 
 class QuantSASRecLSQ(SASRec):

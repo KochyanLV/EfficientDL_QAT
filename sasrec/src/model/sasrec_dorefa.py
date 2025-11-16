@@ -6,8 +6,12 @@ from pathlib import Path
 # Add parent directory to path for qats import
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from qats.DoReFa import DoReFaQuant
-from model import SASRec
+from qats.DoReFa import DoReFaActQuant
+
+try:
+    from model import SASRec
+except ImportError:
+    from src.model import SASRec
 
 
 class QuantSASRecDoReFa(SASRec):
@@ -43,7 +47,7 @@ class QuantSASRecDoReFa(SASRec):
         )
         
         # DoReFa quantizers for activations
-        self.dorefa_embed = DoReFaQuant(
+        self.dorefa_embed = DoReFaActQuant(
             bits=bits_a,
             signed=act_signed,
             preproc=act_preproc,
@@ -51,7 +55,7 @@ class QuantSASRecDoReFa(SASRec):
         
         # One DoReFa quantizer per attention block
         self.dorefa_attn_blocks = nn.ModuleList([
-            DoReFaQuant(
+            DoReFaActQuant(
                 bits=bits_a,
                 signed=act_signed,
                 preproc=act_preproc,
@@ -59,7 +63,7 @@ class QuantSASRecDoReFa(SASRec):
             for _ in range(num_blocks)
         ])
         
-        self.dorefa_final = DoReFaQuant(
+        self.dorefa_final = DoReFaActQuant(
             bits=bits_a,
             signed=act_signed,
             preproc=act_preproc,

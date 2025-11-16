@@ -1,7 +1,10 @@
 import torch
 from torch import nn
 
-from model import EmbeddingLayer, SelfAttnBlock
+try:
+    from model import EmbeddingLayer, SelfAttnBlock
+except ImportError:
+    from src.model import EmbeddingLayer, SelfAttnBlock
 
 
 class SASRec(nn.Module):

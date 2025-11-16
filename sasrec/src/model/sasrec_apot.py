@@ -6,8 +6,12 @@ from pathlib import Path
 # Add parent directory to path for qats import
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from qats.Apot import APoTQuant
-from model import SASRec
+from qats.Apot import APoTQuantRCF
+
+try:
+    from model import SASRec
+except ImportError:
+    from src.model import SASRec
 
 
 class QuantSASRecAPoT(SASRec):
@@ -44,7 +48,7 @@ class QuantSASRecAPoT(SASRec):
         )
         
         # APoT quantizers for activations
-        self.apot_embed = APoTQuant(
+        self.apot_embed = APoTQuantRCF(
             bits=bits,
             k=k,
             init_alpha=init_alpha_act,
@@ -53,7 +57,7 @@ class QuantSASRecAPoT(SASRec):
         
         # One APoT quantizer per attention block
         self.apot_attn_blocks = nn.ModuleList([
-            APoTQuant(
+            APoTQuantRCF(
                 bits=bits,
                 k=k,
                 init_alpha=init_alpha_act,
@@ -62,7 +66,7 @@ class QuantSASRecAPoT(SASRec):
             for _ in range(num_blocks)
         ])
         
-        self.apot_final = APoTQuant(
+        self.apot_final = APoTQuantRCF(
             bits=bits,
             k=k,
             init_alpha=init_alpha_act,

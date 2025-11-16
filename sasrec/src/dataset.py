@@ -2,7 +2,10 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from utils import get_positive2negatives, pad_or_truncate_seq
+try:
+    from utils import get_positive2negatives, pad_or_truncate_seq
+except ImportError:
+    from src.utils import get_positive2negatives, pad_or_truncate_seq
 
 
 User = str

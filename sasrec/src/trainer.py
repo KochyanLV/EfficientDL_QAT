@@ -9,9 +9,14 @@ from torch import nn
 from torch.optim import Optimizer
 from tqdm import tqdm, trange
 
-from dataset import Dataset
-from model import SASRec
-from utils import get_negative_samples, get_scheduler
+try:
+    from dataset import Dataset
+    from model import SASRec
+    from utils import get_negative_samples, get_scheduler
+except ImportError:
+    from src.dataset import Dataset
+    from src.model import SASRec
+    from src.utils import get_negative_samples, get_scheduler
 
 
 StateDict = OrderedDict[str, torch.Tensor]

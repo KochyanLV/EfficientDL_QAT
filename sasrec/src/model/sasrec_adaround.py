@@ -6,8 +6,12 @@ from pathlib import Path
 # Add parent directory to path for qats import
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from qats.AdaRound import AdaRoundQuant
-from model import SASRec
+from qats.AdaRound import AdaRoundWeightQuant
+
+try:
+    from model import SASRec
+except ImportError:
+    from src.model import SASRec
 
 
 class QuantSASRecAdaRound(SASRec):
@@ -40,15 +44,15 @@ class QuantSASRecAdaRound(SASRec):
         )
         
         # AdaRound for activations (treating them as "weights" to quantize)
-        self.adaround_embed = AdaRoundQuant(bits=bits_w)
+        self.adaround_embed = AdaRoundWeightQuant(bits=bits_w)
         
         # One AdaRound quantizer per attention block
         self.adaround_attn_blocks = nn.ModuleList([
-            AdaRoundQuant(bits=bits_w)
+            AdaRoundWeightQuant(bits=bits_w)
             for _ in range(num_blocks)
         ])
         
-        self.adaround_final = AdaRoundQuant(bits=bits_w)
+        self.adaround_final = AdaRoundWeightQuant(bits=bits_w)
     
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:
         return self.adaround_embed(x)

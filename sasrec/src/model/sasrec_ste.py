@@ -6,8 +6,12 @@ from pathlib import Path
 # Add parent directory to path for qats import
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from qats.FakeSte import FakeSTEQuant
-from model import SASRec
+from qats.FakeSte import FakeQuantSTE
+
+try:
+    from model import SASRec
+except ImportError:
+    from src.model import SASRec
 
 
 class QuantSASRecSTE(SASRec):
@@ -41,15 +45,15 @@ class QuantSASRecSTE(SASRec):
         )
         
         # STE quantizers for activations
-        self.ste_embed = FakeSTEQuant(bits=bits)
+        self.ste_embed = FakeQuantSTE(bits=bits)
         
         # One STE quantizer per attention block
         self.ste_attn_blocks = nn.ModuleList([
-            FakeSTEQuant(bits=bits)
+            FakeQuantSTE(bits=bits)
             for _ in range(num_blocks)
         ])
         
-        self.ste_final = FakeSTEQuant(bits=bits)
+        self.ste_final = FakeQuantSTE(bits=bits)
     
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:
         return self.ste_embed(x)

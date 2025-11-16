@@ -7,7 +7,11 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
 from qats.Pact import PACTAct
-from model import SASRec
+
+try:
+    from model import SASRec
+except ImportError:
+    from src.model import SASRec
 
 
 class QuantSASRecPACT(SASRec):
