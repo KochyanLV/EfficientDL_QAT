@@ -23,10 +23,9 @@ def load_movielens(min_rating: float = 4.0):
         from pathlib import Path
         
         possible_paths = [
-            Path(__file__).parent.parent / 'data' / 'ratings.dat',
-            Path('sasrec/data/ratings.dat'),
-            Path('data/ratings.dat'),
-            Path('/kaggle/input/movielens-1m/ratings.dat'),
+            Path(__file__).parent.parent / 'data' / 'u.data',
+            Path('sasrec/data/u.data'),
+            Path('data/u.data'),
         ]
         
         data_path = None
@@ -36,13 +35,13 @@ def load_movielens(min_rating: float = 4.0):
                 break
         
         if data_path is None:
-            raise FileNotFoundError("ratings.dat not found. Please place it in sasrec/data/ratings.dat")
+            raise FileNotFoundError("u.data not found. Please place it in sasrec/data/u.data")
         
         logger.info(f"Loading from local file: {data_path}")
         
         df = pd.read_csv(
             data_path, 
-            sep='::', 
+            sep='\t', 
             names=['user_id', 'item_id', 'rating', 'timestamp'],
             engine='python'
         )
