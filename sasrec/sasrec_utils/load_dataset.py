@@ -17,25 +17,70 @@ def load_movielens_100k(min_rating: float = 4.0):
         num_users: int
         num_items: int
     """
-    logger.info("Generating synthetic sequential recommendation data")
-    logger.info("(For real experiments, replace with MovieLens, Amazon, or other sequential dataset)")
+    logger.info("Loading MovieLens-100K dataset")
     
-    # Generate synthetic sequential data for demonstration
-    # TODO: Replace with real dataset loading:
-    #   - MovieLens: https://grouplens.org/datasets/movielens/
-    #   - Amazon Reviews: http://jmcauley.ucsd.edu/data/amazon/
-    #   - Steam: https://cseweb.ucsd.edu/~jmcauley/datasets.html#steam_data
-    
-    user_sequences = defaultdict(list)
-    num_users = 100
-    num_items = 500
-    
-    # Generate synthetic user sequences
-    np.random.seed(42)
-    for user_id in range(num_users):
-        seq_len = np.random.randint(5, 20)
-        items = np.random.choice(num_items, size=seq_len, replace=False).tolist()
-        user_sequences[user_id] = items
+    try:
+        # Загрузка MovieLens 100K из локального файла
+        from pathlib import Path
+        
+        # Ищем файл u.data в разных местах
+        possible_paths = [
+            Path(__file__).parent.parent / 'data' / 'u.data',  # sasrec/data/u.data
+            Path('sasrec/data/u.data'),                         # относительный путь
+            Path('data/u.data'),                                 # если запуск из sasrec/    # Kaggle
+        ]
+        
+        data_path = None
+        for path in possible_paths:
+            if path.exists():
+                data_path = path
+                break
+        
+        if data_path is None:
+            raise FileNotFoundError("u.data not found. Please place it in sasrec/data/u.data")
+        
+        logger.info(f"Loading from local file: {data_path}")
+        
+        # Формат: user_id | item_id | rating | timestamp
+        df = pd.read_csv(
+            data_path, 
+            sep='\t', 
+            names=['user_id', 'item_id', 'rating', 'timestamp'],
+            engine='python'
+        )
+        
+        # Фильтруем по рейтингу (только положительные взаимодействия)
+        df = df[df['rating'] >= min_rating]
+        
+        # Сортируем по времени для каждого пользователя
+        df = df.sort_values(['user_id', 'timestamp'])
+        
+        # Создаем последовательности для каждого пользователя
+        user_sequences = defaultdict(list)
+        for user_id, group in df.groupby('user_id'):
+            items = group['item_id'].tolist()
+            if len(items) >= 3:  # Минимум 3 взаимодействия
+                user_sequences[user_id] = items
+        
+        num_users = len(user_sequences)
+        num_items = df['item_id'].max() + 1  # +1 для padding token
+        
+        logger.info(f"Successfully loaded MovieLens-100K")
+        
+    except Exception as e:
+        logger.warning(f"Failed to load MovieLens-100K: {e}")
+        logger.info("Falling back to synthetic data")
+        
+        # Fallback: генерируем синтетические данные
+        user_sequences = defaultdict(list)
+        num_users = 100
+        num_items = 500
+        
+        np.random.seed(42)
+        for user_id in range(num_users):
+            seq_len = np.random.randint(5, 20)
+            items = np.random.choice(num_items, size=seq_len, replace=False).tolist()
+            user_sequences[user_id] = items
     
     logger.info(f"Loaded {len(user_sequences)} users, {num_items} items")
     return dict(user_sequences), num_users, num_items

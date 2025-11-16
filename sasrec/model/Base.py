@@ -143,4 +143,3 @@ class BaseSASRec(nn.Module):
         logits = F.linear(x_last, w_q, self.head.bias)  # (B, num_items)
         
         return logits
-
