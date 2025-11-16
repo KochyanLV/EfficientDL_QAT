@@ -23,11 +23,12 @@ def load_movielens_100k(min_rating: float = 4.0):
         # Загрузка MovieLens 100K из локального файла
         from pathlib import Path
         
-        # Ищем файл u.data в разных местах
+        # Ищем файл ratings.dat в разных местах
         possible_paths = [
-            Path(__file__).parent.parent / 'data' / 'u.data',  # sasrec/data/u.data
-            Path('sasrec/data/u.data'),                         # относительный путь
-            Path('data/u.data'),                                 # если запуск из sasrec/    # Kaggle
+            Path(__file__).parent.parent / 'data' / 'ratings.dat',  # sasrec/data/ratings.dat
+            Path('sasrec/data/ratings.dat'),                         # относительный путь
+            Path('data/ratings.dat'),                                 # если запуск из sasrec/
+            Path('/kaggle/input/movielens-1m/ratings.dat'),          # Kaggle
         ]
         
         data_path = None
@@ -37,14 +38,14 @@ def load_movielens_100k(min_rating: float = 4.0):
                 break
         
         if data_path is None:
-            raise FileNotFoundError("u.data not found. Please place it in sasrec/data/u.data")
+            raise FileNotFoundError("ratings.dat not found. Please place it in sasrec/data/ratings.dat")
         
         logger.info(f"Loading from local file: {data_path}")
         
-        # Формат: user_id | item_id | rating | timestamp
+        # Формат: UserID::MovieID::Rating::Timestamp
         df = pd.read_csv(
             data_path, 
-            sep='\t', 
+            sep='::', 
             names=['user_id', 'item_id', 'rating', 'timestamp'],
             engine='python'
         )
