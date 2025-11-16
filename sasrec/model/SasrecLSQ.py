@@ -25,10 +25,8 @@ class QuantSASRecLSQ(BaseSASRec):
     ):
         super().__init__(num_items, embed_dim, num_heads, num_blocks, max_len, dropout)
         
-        # Activation quantizers
         self.lsq_act_emb = LSQQuant(bits=bits, per_channel=False)
         
-        # Separate quantizers for each attention and FFN block
         self.lsq_act_attn = torch.nn.ModuleList([
             LSQQuant(bits=bits, per_channel=False) for _ in range(num_blocks)
         ])
@@ -36,7 +34,6 @@ class QuantSASRecLSQ(BaseSASRec):
             LSQQuant(bits=bits, per_channel=False) for _ in range(num_blocks)
         ])
         
-        # Weight quantizer for prediction head
         self.lsq_w_head = LSQQuant(bits=bits, per_channel=True, ch_axis=0)
     
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:

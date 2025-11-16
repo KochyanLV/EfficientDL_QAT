@@ -32,22 +32,13 @@ def compute_ndcg_at_k(predictions: torch.Tensor, targets: torch.Tensor, k: int =
     """
     batch_size = predictions.size(0)
     
-    # Get top-k predictions
     _, top_k_indices = torch.topk(predictions, k=min(k, predictions.size(1)), dim=1)
-    
-    # Check if target is in top-k
     targets_expanded = targets.unsqueeze(1).expand_as(top_k_indices)
     hits = (top_k_indices == targets_expanded).float()
     
-    # Compute DCG
-    # Find position of hit (0-indexed)
     positions = torch.arange(1, k + 1, dtype=torch.float32, device=predictions.device)
     dcg = (hits / torch.log2(positions + 1)).sum(dim=1)
-    
-    # IDCG is always 1/log2(2) for single relevant item at position 0
     idcg = 1.0 / math.log2(2)
-    
-    # NDCG
     ndcg = dcg / idcg
     
     return ndcg.mean().item()
@@ -69,7 +60,6 @@ def compute_metrics(logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, fl
         ndcg_5 = compute_ndcg_at_k(logits, targets, k=5)
         ndcg_20 = compute_ndcg_at_k(logits, targets, k=20)
         
-        # Hit rate @10
         _, top_10 = torch.topk(logits, k=min(10, logits.size(1)), dim=1)
         targets_expanded = targets.unsqueeze(1).expand_as(top_10)
         hit_10 = (top_10 == targets_expanded).any(dim=1).float().mean().item()
@@ -91,22 +81,18 @@ def train_one_epoch(
 ) -> float:
     """Train for one epoch"""
     model.train()
-    loss_fn = nn.CrossEntropyLoss(ignore_index=0)  # 0 is padding
+    loss_fn = nn.CrossEntropyLoss(ignore_index=0)
     total_loss = 0.0
     n_samples = 0
 
     for batch in loader:
         batch = to_device(batch, device)
-        sequences = batch["sequence"]      # (B, max_len)
-        targets = batch["target"]          # (B,)
+        sequences = batch["sequence"]
+        targets = batch["target"]
         
-        # Forward pass
-        logits = model(sequences)          # (B, num_items)
-        
-        # Compute loss
+        logits = model(sequences)
         loss = loss_fn(logits, targets)
         
-        # Backward pass
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         
@@ -153,11 +139,8 @@ def evaluate(
         all_logits.append(logits)
         all_targets.append(targets)
     
-    # Concatenate all predictions
     all_logits = torch.cat(all_logits, dim=0)
     all_targets = torch.cat(all_targets, dim=0)
-    
-    # Compute metrics
     metrics = compute_metrics(all_logits, all_targets)
     avg_loss = total_loss / max(n_samples, 1)
     
@@ -179,7 +162,6 @@ def fit(
     model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     
-    # Cosine annealing scheduler
     total_steps = epochs * max(len(train_loader), 1)
     def lr_lambda(step):
         return 0.5 * (1 + math.cos(math.pi * step / max(total_steps, 1)))
@@ -219,17 +201,14 @@ def fit(
             "hit@10": float(val_metrics["hit@10"]),
         })
         
-        # Save best model based on NDCG@10
         if val_metrics["ndcg@10"] > best_ndcg:
             best_ndcg = val_metrics["ndcg@10"]
             best_state = {k: v.cpu() for k, v in model.state_dict().items()}
     
-    # Load best model
     if best_state is not None:
         model.load_state_dict(best_state)
     print(f"Best NDCG@10: {best_ndcg:.4f}")
     
-    # Save checkpoint
     ckpt_path = save_ckpt_from_init(
         model,
         extra={"epochs": epochs, "bs": bs, "lr": lr},
@@ -238,7 +217,6 @@ def fit(
     
     logger.info(f"Save best model and metrics to: {ckpt_path}")
     
-    # Save metrics
     ckpt_path = Path(ckpt_path)
     metrics_path = ckpt_path.with_suffix(".json")
     

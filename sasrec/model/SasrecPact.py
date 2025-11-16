@@ -27,7 +27,6 @@ class QuantSASRecPACT(BaseSASRec):
     ):
         super().__init__(num_items, embed_dim, num_heads, num_blocks, max_len, dropout)
         
-        # PACT activation quantizers
         self.pact_emb = PACTAct(bits=bits_act, init_alpha=pact_init_alpha)
         
         self.pact_attn = torch.nn.ModuleList([
@@ -37,7 +36,6 @@ class QuantSASRecPACT(BaseSASRec):
             PACTAct(bits=bits_act, init_alpha=pact_init_alpha) for _ in range(num_blocks)
         ])
         
-        # Weight quantizer for head
         self.wq_head = UniformWeightQuant(bits=bits_w, per_channel=True, ch_axis=0)
     
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:

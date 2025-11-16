@@ -4,10 +4,7 @@ import torch
 import re
 
 def record_init(cls):
-    """
-    Декоратор класса: перехватывает __init__, сохраняет все переданные
-    параметры (с учётом дефолтов) в self._init_args (dict).
-    """
+    """Decorator: intercepts __init__, saves all parameters in self._init_args"""
     orig_init = cls.__init__
     sig = inspect.signature(orig_init)
 
@@ -37,12 +34,7 @@ def _sanitize(v):
 
 def build_ckpt_name(model, extra: dict | None = None,
                     with_values: bool = True) -> str:
-    """
-    Собирает имя файла на основе:
-      - имени класса модели
-      - всех параметров __init__ (model._init_args)
-      - опционально дополнительных полей (epochs, batch_size и т.п.)
-    """
+    """Build checkpoint filename from model class name and init args"""
     base = _short_class_name(model)
 
     parts = []

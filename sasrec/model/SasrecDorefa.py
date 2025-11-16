@@ -29,7 +29,6 @@ class QuantSASRecDoReFa(BaseSASRec):
     ):
         super().__init__(num_items, embed_dim, num_heads, num_blocks, max_len, dropout)
         
-        # DoReFa activation quantizers
         self.dorefa_act_emb = DoReFaActQuant(bits_a=bits_a, signed=act_signed, preproc=act_preproc)
         
         self.dorefa_act_attn = torch.nn.ModuleList([
@@ -41,7 +40,6 @@ class QuantSASRecDoReFa(BaseSASRec):
             for _ in range(num_blocks)
         ])
         
-        # DoReFa weight quantizer for head
         self.dorefa_w_head = DoReFaWeightQuant(bits_w=bits_w)
     
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:

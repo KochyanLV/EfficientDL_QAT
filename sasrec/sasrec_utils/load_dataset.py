@@ -20,15 +20,13 @@ def load_movielens(min_rating: float = 4.0):
     logger.info("Loading MovieLens-100K dataset")
     
     try:
-        # Загрузка MovieLens 100K из локального файла
         from pathlib import Path
         
-        # Ищем файл ratings.dat в разных местах
         possible_paths = [
-            Path(__file__).parent.parent / 'data' / 'ratings.dat',  # sasrec/data/ratings.dat
-            Path('sasrec/data/ratings.dat'),                         # относительный путь
-            Path('data/ratings.dat'),                                 # если запуск из sasrec/
-            Path('/kaggle/input/movielens-1m/ratings.dat'),          # Kaggle
+            Path(__file__).parent.parent / 'data' / 'ratings.dat',
+            Path('sasrec/data/ratings.dat'),
+            Path('data/ratings.dat'),
+            Path('/kaggle/input/movielens-1m/ratings.dat'),
         ]
         
         data_path = None
@@ -42,7 +40,6 @@ def load_movielens(min_rating: float = 4.0):
         
         logger.info(f"Loading from local file: {data_path}")
         
-        # Формат: UserID::MovieID::Rating::Timestamp
         df = pd.read_csv(
             data_path, 
             sep='::', 
@@ -50,21 +47,17 @@ def load_movielens(min_rating: float = 4.0):
             engine='python'
         )
         
-        # Фильтруем по рейтингу (только положительные взаимодействия)
         df = df[df['rating'] >= min_rating]
-        
-        # Сортируем по времени для каждого пользователя
         df = df.sort_values(['user_id', 'timestamp'])
         
-        # Создаем последовательности для каждого пользователя
         user_sequences = defaultdict(list)
         for user_id, group in df.groupby('user_id'):
             items = group['item_id'].tolist()
-            if len(items) >= 3:  # Минимум 3 взаимодействия
+            if len(items) >= 3:
                 user_sequences[user_id] = items
         
         num_users = len(user_sequences)
-        num_items = df['item_id'].max() + 1  # +1 для padding token
+        num_items = df['item_id'].max() + 1
         
         logger.info(f"Successfully loaded MovieLens-100K")
         
@@ -72,7 +65,6 @@ def load_movielens(min_rating: float = 4.0):
         logger.warning(f"Failed to load MovieLens-100K: {e}")
         logger.info("Falling back to synthetic data")
         
-        # Fallback: генерируем синтетические данные
         user_sequences = defaultdict(list)
         num_users = 100
         num_items = 500
@@ -114,11 +106,9 @@ def prepare_sequences(
         if len(items) < 3:  # Need at least 3 items
             continue
             
-        # Last item for test, second-to-last for validation, rest for training
         test_target = items[-1]
         test_seq = items[:-1][-max_len:]
         
-        # Use all but last item for training
         for i in range(2, len(items)):
             train_seq = items[:i-1][-max_len:]
             train_target = items[i-1]
@@ -126,7 +116,6 @@ def prepare_sequences(
             train_data['sequence'].append(train_seq)
             train_data['target'].append(train_target)
         
-        # Test sample
         test_data['user_id'].append(user_id)
         test_data['sequence'].append(test_seq)
         test_data['target'].append(test_target)

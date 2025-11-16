@@ -51,7 +51,6 @@ if __name__ == "__main__":
     logger.info(f"Number of items (including padding): {num_items}")
     logger.info(f"Device: {device}")
     
-    # Base model without quantization
     logger.info("=" * 80)
     logger.info("Model: Base SASRec (no quantization)")
     logger.info("=" * 80)
@@ -65,7 +64,6 @@ if __name__ == "__main__":
     )
     model_base = fit(model_base, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
-    # LSQ quantization
     logger.info("=" * 80)
     logger.info("Model: SASRec + LSQ")
     logger.info("=" * 80)
@@ -80,7 +78,6 @@ if __name__ == "__main__":
     )
     model_lsq = fit(model_lsq, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
-    # PACT quantization
     logger.info("=" * 80)
     logger.info("Model: SASRec + PACT")
     logger.info("=" * 80)
@@ -97,7 +94,6 @@ if __name__ == "__main__":
     )
     model_pact = fit(model_pact, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
-    # AdaRound quantization
     logger.info("=" * 80)
     logger.info("Model: SASRec + AdaRound")
     logger.info("=" * 80)
@@ -112,7 +108,6 @@ if __name__ == "__main__":
     )
     model_ada = fit(model_ada, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
-    # APoT quantization
     logger.info("=" * 80)
     logger.info("Model: SASRec + APoT")
     logger.info("=" * 80)
@@ -124,14 +119,13 @@ if __name__ == "__main__":
         max_len=MAX_LEN,
         dropout=DROPOUT,
         bits=8,
-        k=1,  # For bits=8: (8-1) % k must be 0, so k=1 or k=7
+        k=1,
         init_alpha_act=6.0,
         init_alpha_w=2.0,
         use_weight_norm_w=True
     )
     model_apot = fit(model_apot, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
-    # DoReFa quantization
     logger.info("=" * 80)
     logger.info("Model: SASRec + DoReFa")
     logger.info("=" * 80)
@@ -149,7 +143,6 @@ if __name__ == "__main__":
     )
     model_dorefa = fit(model_dorefa, train_loader, test_loader, device, epochs=EPOCHS, lr=LR)
     
-    # Fake STE quantization
     logger.info("=" * 80)
     logger.info("Model: SASRec + Fake STE")
     logger.info("=" * 80)

@@ -26,7 +26,6 @@ class QuantSASRecSTE(BaseSASRec):
         
         self.fq = FakeQuantSTE(bits)
         
-        # Learnable scales for activations
         self.s_act_emb = nn.Parameter(torch.tensor(1.0))
         
         self.s_act_attn = nn.ParameterList([
@@ -36,7 +35,6 @@ class QuantSASRecSTE(BaseSASRec):
             nn.Parameter(torch.tensor(1.0)) for _ in range(num_blocks)
         ])
         
-        # Learnable scale for head weights
         self.s_w_head = nn.Parameter(torch.tensor(1.0))
     
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:

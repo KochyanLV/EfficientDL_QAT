@@ -28,7 +28,6 @@ class QuantSASRecAPoT(BaseSASRec):
     ):
         super().__init__(num_items, embed_dim, num_heads, num_blocks, max_len, dropout)
         
-        # APoT activation quantizers (per-tensor)
         self.apot_act_emb = APoTQuantRCF(bits=bits, k=k, per_channel=False, init_alpha=init_alpha_act)
         
         self.apot_act_attn = torch.nn.ModuleList([
@@ -40,7 +39,6 @@ class QuantSASRecAPoT(BaseSASRec):
             for _ in range(num_blocks)
         ])
         
-        # APoT weight quantizer for head
         self.apot_w_head = APoTQuantRCF(
             bits=bits, k=k, per_channel=True, ch_axis=0,
             init_alpha=init_alpha_w, use_weight_norm=use_weight_norm_w

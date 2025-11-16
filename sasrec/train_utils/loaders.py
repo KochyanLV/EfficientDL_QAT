@@ -32,13 +32,10 @@ class SASRecDataset(Dataset):
         target = self.targets[idx]
         user_id = self.user_ids[idx]
         
-        # Pad sequence to max_len
         seq_len = len(seq)
         if seq_len < self.max_len:
-            # Pad with zeros (item 0 is reserved for padding)
             padded_seq = [0] * (self.max_len - seq_len) + seq
         else:
-            # Take last max_len items
             padded_seq = seq[-self.max_len:]
         
         return {
@@ -78,17 +75,12 @@ def make_loaders(batch_size: int = 32, max_len: int = 50, num_workers: int = 0):
     """
     logger.info("Creating dataloaders for SASRec")
     
-    # Load dataset
     user_sequences, num_users, num_items = load_movielens()
-    
-    # Prepare sequences
     train_data, test_data = prepare_sequences(user_sequences, max_len=max_len)
     
-    # Create datasets
     train_dataset = SASRecDataset(train_data, max_len=max_len, num_items=num_items)
     test_dataset = SASRecDataset(test_data, max_len=max_len, num_items=num_items)
     
-    # Create dataloaders
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
@@ -108,5 +100,5 @@ def make_loaders(batch_size: int = 32, max_len: int = 50, num_workers: int = 0):
     logger.info(f"Train batches: {len(train_loader)}, Test batches: {len(test_loader)}")
     logger.info(f"Num users: {num_users}, Num items: {num_items}")
     
-    return train_loader, test_loader, num_users, num_items + 1  # +1 for padding token
+    return train_loader, test_loader, num_users, num_items + 1
 

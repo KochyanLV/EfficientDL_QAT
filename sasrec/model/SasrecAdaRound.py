@@ -22,7 +22,6 @@ class QuantSASRecAdaRound(BaseSASRec):
     ):
         super().__init__(num_items, embed_dim, num_heads, num_blocks, max_len, dropout)
         
-        # AdaRound weight quantizer for prediction head
         self.wq_head = AdaRoundWeightQuant(bits=bits_w, per_channel=True, ch_axis=0)
     
     def quant_head_weight(self, w: torch.Tensor) -> torch.Tensor:
