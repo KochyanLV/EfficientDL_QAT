@@ -1,0 +1,20 @@
+# Our project in quantization
+
+## Clone project
+```
+git clone https://github.com/KochyanLV/EfficientDL_QAT.git
+```
+
+## Install requirements.txt
+```
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+## lstm training from scratch
+```
+1. python lstm.lstm_utils.tokenize.py - builds tokenizer if you want to try another tokenization
+2. python lstm.training.py - train models with qats
+3. python lstm.speed_tets_best_model.py - small benchmark on best and base models
+```
