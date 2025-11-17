@@ -49,3 +49,22 @@ uv pip install -r requirements.txt
 | AdaRound       | 0.314 |
 | APoT (best)    | 0.337 |
 | DoreFa         | 0.300 |
+
+
+## espcn training from scratch
+```
+./run_espcn_experiments.sh
+```
+
+### Results for espcn
+
+| Methods         | PCNR |
+|----------------|------|
+| BaseModel fp32 | 25.4 |
+| LSQ            | 12.0 |
+| PACT           | 25.2 |
+| AdaRound       | 15.4 |
+| APoT           | 7.4  |
+| DoreFa (best)  | 13.3 |
+| STE            | 24.9 |
+
