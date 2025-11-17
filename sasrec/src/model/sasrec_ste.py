@@ -55,12 +55,19 @@ class QuantSASRecSTE(SASRec):
         
         self.ste_final = FakeQuantSTE(bits=bits)
     
+        # Learnable scale parameters for each quantization point
+        self.s_act_embed = nn.Parameter(torch.tensor(1.0))
+        self.s_act_attn_blocks = nn.ParameterList([
+            nn.Parameter(torch.tensor(1.0)) for _ in range(num_blocks)
+        ])
+        self.s_act_final = nn.Parameter(torch.tensor(1.0))
+    
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:
-        return self.ste_embed(x)
+        return self.ste_embed(x, self.s_act_embed)
     
     def quant_attn_out(self, x: torch.Tensor, block_idx: int = 0) -> torch.Tensor:
-        return self.ste_attn_blocks[block_idx](x)
+        return self.ste_attn_blocks[block_idx](x, self.s_act_attn_blocks[block_idx])
     
     def quant_final_out(self, x: torch.Tensor) -> torch.Tensor:
-        return self.ste_final(x)
+        return self.ste_final(x, self.s_act_final)
 

@@ -48,7 +48,7 @@ class QuantSASRecDoReFa(SASRec):
         
         # DoReFa quantizers for activations
         self.dorefa_embed = DoReFaActQuant(
-            bits=bits_a,
+            bits_a=bits_a,
             signed=act_signed,
             preproc=act_preproc,
         )
@@ -56,7 +56,7 @@ class QuantSASRecDoReFa(SASRec):
         # One DoReFa quantizer per attention block
         self.dorefa_attn_blocks = nn.ModuleList([
             DoReFaActQuant(
-                bits=bits_a,
+                bits_a=bits_a,
                 signed=act_signed,
                 preproc=act_preproc,
             )
@@ -64,7 +64,7 @@ class QuantSASRecDoReFa(SASRec):
         ])
         
         self.dorefa_final = DoReFaActQuant(
-            bits=bits_a,
+            bits_a=bits_a,
             signed=act_signed,
             preproc=act_preproc,
         )

@@ -43,16 +43,16 @@ class QuantSASRecAdaRound(SASRec):
             device=device,
         )
         
-        # AdaRound for activations (treating them as "weights" to quantize)
-        self.adaround_embed = AdaRoundWeightQuant(bits=bits_w)
+        # AdaRound for activations (using per-tensor scaling since activations vary in shape)
+        self.adaround_embed = AdaRoundWeightQuant(bits=bits_w, per_channel=False)
         
         # One AdaRound quantizer per attention block
         self.adaround_attn_blocks = nn.ModuleList([
-            AdaRoundWeightQuant(bits=bits_w)
+            AdaRoundWeightQuant(bits=bits_w, per_channel=False)
             for _ in range(num_blocks)
         ])
         
-        self.adaround_final = AdaRoundWeightQuant(bits=bits_w)
+        self.adaround_final = AdaRoundWeightQuant(bits=bits_w, per_channel=False)
     
     def quant_embed_out(self, x: torch.Tensor) -> torch.Tensor:
         return self.adaround_embed(x)
