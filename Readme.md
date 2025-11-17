@@ -18,3 +18,8 @@ uv pip install -r requirements.txt
 2. python lstm.training.py - train models with qats
 3. python lstm.speed_tets_best_model.py - small benchmark on best and base models
 ```
+
+## sasrec training from scratch
+```
+python sasrec/training.py        # train models with QAT for sasrec
+```
