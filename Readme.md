@@ -17,6 +17,7 @@ uv pip install -r requirements.txt
 1. python lstm.lstm_utils.tokenize.py - builds tokenizer if you want to try another tokenization
 2. python lstm.training.py - train models with qats
 3. python lstm.speed_tets_best_model.py - small benchmark on best and base models
+4. python lstm.vizualize_act_dorefa.py - vizualizing activation ranges and errors in dorefa
 ```
 
 ## sasrec training from scratch
