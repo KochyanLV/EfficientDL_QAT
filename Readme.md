@@ -23,6 +23,6 @@ uv pip install -r requirements.txt
 ## sasrec training from scratch
 ```
 1. python sasrec/training.py - train models with QAT for sasrec
-2. sasrec/SASRec_QAT.pdf - notebook with all experiments 
+2. sasrec/sasrec-qat.ipynb - notebook with all experiments 
 3. sasrec/outputs/ - all best checkpoints
 ```
